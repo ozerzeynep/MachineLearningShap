@@ -13,6 +13,7 @@ from sklearn.metrics import mean_absolute_error as MAE
 from sklearn.metrics import r2_score as R2
 from sklearn.datasets import load_diabetes
 
+#Boruta-SHAP Feature Selection Method
 def print_feature_importances_random_forest(random_forest_model):
     
     '''
@@ -98,6 +99,7 @@ y.head(5)
 # Splits the dataset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
 
+#In order to compare results before and after applying Boruta Shap feature selection, we will fisrt run a simple regression
 # Prepares a default instance of the random forest regressor
 model = RandomForestRegressor()
 
@@ -123,7 +125,7 @@ importance_scores = list(feature_importances.values())
 # Önem skorlarına göre sıralama
 sorted_scores, sorted_names = zip(*sorted(zip(importance_scores, feature_names), reverse=False))
 
-import matplotlib.pyplot as plt
+
 # Grafiğin boyutunu ayarlayın
 plt.figure(figsize=(12, 6))
 
@@ -142,6 +144,7 @@ for i, v in enumerate(sorted_scores):
 # Grafiği gösterin
 plt.show()
 
+#SHAP evaluation
 # Fits the explainer
 explainer = shap.Explainer(model.predict, X)
 
@@ -159,6 +162,7 @@ shap.plots.beeswarm(shap_values)
 
 
 #BORUTA---------------
+#Select features using Boruta
 # Defines the estimator used by the Boruta algorithm
 estimator = RandomForestRegressor()
 
@@ -187,6 +191,7 @@ print(f"Features confirmed as unimportant: {unimportant}")
 X_train_boruta = boruta.transform(np.array(X_train))
 X_train_boruta
 
+#Select features using Boruta-SHAP
 # Creates a BorutaShap selector for regression
 selector = BorutaShap(importance_measure = 'shap', classification = False)
 
@@ -209,7 +214,7 @@ X_test_boruta_shap = X_test.drop(columns = features_to_remove)
 X_train_boruta_shap.head()
 
 
-
+#Fits a new regression model to the new data
 # Prepares a default instance of the random forest regressor
 model_new = RandomForestRegressor()
 
@@ -238,6 +243,8 @@ shap.plots.bar(shap_values)
 # Plots the beeswarm
 shap.plots.beeswarm(shap_values, max_display=14)
 
+
+#Plots the binomial distribution
 #Plots the binomial distribution
 n = 20
 p = 0.5
@@ -266,6 +273,8 @@ stats.binom.ppf(0.995, n, p)
 # Confirming:
 stats.binom.cdf(16, n, p)
 
+
+#Final plot
 red_border = int(stats.binom.ppf(0.005, n, p))
 red_zone = pmf[:red_border+1]
 
@@ -295,4 +304,6 @@ for x, y in zip(range(green_border, n+1), green_zone):
 plt.xticks(range(n+1))
 plt.title("Binomial distribution. p = 0.5; n = 20")
 
+
+#Table for the article
 pd.DataFrame(index = ["hits"], data = {"genre" : 3, "audience_score" : 14, "critic_score"  : 20})
