@@ -97,7 +97,7 @@ y = dataset['target']
 y.head(5)
 
 # Splits the dataset
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=11)
 
 #In order to compare results before and after applying Boruta Shap feature selection, we will fisrt run a simple regression
 # Prepares a default instance of the random forest regressor
